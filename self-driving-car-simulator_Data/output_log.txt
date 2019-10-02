@@ -1,0 +1,43 @@
+Mono path[0] = 'C:/Users/mxic/Desktop/self-driving-car-sim/self-driving-car-simulator_Data/Managed'
+Mono path[1] = 'C:/Users/mxic/Desktop/self-driving-car-sim/self-driving-car-simulator_Data/Mono'
+Mono config path = 'C:/Users/mxic/Desktop/self-driving-car-sim/self-driving-car-simulator_Data/Mono/etc'
+PlayerConnection initialized from C:/Users/mxic/Desktop/self-driving-car-sim/self-driving-car-simulator_Data (debug = 0)
+PlayerConnection initialized network socket : 0.0.0.0 55210
+Multi-casting "[IP] 192.168.1.115 [Port] 55210 [Flags] 2 [Guid] 2678178948 [EditorId] 2900184035 [Version] 1048832 [Id] WindowsPlayer(HOST03) [Debug] 0" to [225.0.0.222:54997]...
+Started listening to [0.0.0.0:55210]
+PlayerConnection already initialized - listening to [0.0.0.0:55210]
+Player data archive not found at `C:/Users/mxic/Desktop/self-driving-car-sim/self-driving-car-simulator_Data/data.unity3d`, using local filesystemInitialize engine version: 5.6.6f2 (6bac21139588)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: Intel(R) UHD Graphics 620 (ID=0x5917)
+    Vendor:   Intel
+    VRAM:     2111 MB
+    Driver:   23.20.16.5018
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+- Completed reload, in  0.034 seconds
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\System.dll (this message is harmless)
+OnLevelWasLoaded was found on ReturnToMainMenu
+This message has been deprecated and will be removed in a later version of Unity.
+Add a delegate to SceneManager.sceneLoaded instead to get notifications after scene loading has completed
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Mono/MonoScriptCache.cpp Line: 376)
+
+Platform assembly: C:\Users\mxic\Desktop\self-driving-car-sim\self-driving-car-simulator_Data\Managed\Mono.Security.dll (this message is harmless)
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initializing input.
+XInput1_3.dll not found. Trying XInput9_1_0.dll instead...
+<RI> Input initialized.
