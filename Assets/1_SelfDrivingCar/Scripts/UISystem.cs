@@ -23,9 +23,24 @@ public class UISystem : MonoSingleton<UISystem> {
     private float topSpeed;
 	private bool saveRecording;
 
+	//YC
+	public int fpsTarget;
+	public float updateInterval = 0.5f;
+	private float lastInterval;
+	private int frames =0;
+	private float fps;
+	//YC
+
+
 
     // Use this for initialization
     void Start() {
+		//YC
+		Application.targetFrameRate =fpsTarget;
+		lastInterval = Time.realtimeSinceStartup;
+		frames = 0;
+		//YC
+
 		Debug.Log (isTraining);
         topSpeed = carController.MaxSpeed;
         recording = false;
@@ -84,8 +99,26 @@ public class UISystem : MonoSingleton<UISystem> {
         SetAngleValue(carController.CurrentSteerAngle);
     }
 
+	//YC
+	void OnGUI()
+	{
+		GUI.Label(new Rect(Screen.width/2,0,100,100),"FPS: " + fps);
+	}
+	//YC
+
 	// Update is called once per frame
 	void Update () {
+
+		//YC
+		frames++;
+		float timeNow = Time.realtimeSinceStartup;
+		if (timeNow >= lastInterval + updateInterval) {
+			fps = frames / (timeNow - lastInterval);
+			frames = 0;
+			lastInterval = timeNow;
+		}
+		//YC
+
 
         // Easier than pressing the actual button :-)
         // Should make recording training data more pleasant.
@@ -110,6 +143,8 @@ public class UISystem : MonoSingleton<UISystem> {
 
 		if (!isTraining) 
 		{
+			//YC commented
+			/*
 			if ((Input.GetKey(KeyCode.W)) || (Input.GetKey(KeyCode.S))) 
 			{
 				DriveStatus_Text.color = Color.red;
@@ -119,20 +154,18 @@ public class UISystem : MonoSingleton<UISystem> {
 			{
 				DriveStatus_Text.color = Color.white;
 				DriveStatus_Text.text = "Mode: Autonomous";
-			}
+			}*/
 		}
 
 	    if(Input.GetKeyDown(KeyCode.Escape))
         {
             //Do Menu Here
-            SceneManager.LoadScene("MenuScene");
+            //SceneManager.LoadScene("MenuScene");
+			Scene scene = SceneManager.GetActiveScene();
+			SceneManager.LoadScene( scene.name );
+			//Debug.Log("Must restart");
         }
-
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            //Do Console Here
-        }
-
+			
         UpdateCarValues();
     }
 }
