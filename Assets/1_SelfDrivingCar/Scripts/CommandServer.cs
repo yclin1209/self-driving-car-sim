@@ -24,10 +24,10 @@ public class CommandServer : MonoBehaviour
 	int currentPos = 0;
 	int moveToPos = 0;
 	bool moved = false;
-	const int WHEEL_RANGE = 300;
+	const int WHEEL_RANGE = 300; // must same with G HUB's setting
 	float modelAngle = 0;
 	bool manualMode = false;
-
+	static int loopCount = 0;
 
 	// YC added
 	void Awake () {
@@ -41,8 +41,8 @@ public class CommandServer : MonoBehaviour
 		// move the wheel to generate a read event
 		//
 		if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
-			LogitechGSDK.LogiPlayConstantForce (0, 50);
-			Thread.Sleep (50);
+			LogitechGSDK.LogiPlayConstantForce (0, 40);
+			Thread.Sleep (20);
 		}
 
 
@@ -73,9 +73,6 @@ public class CommandServer : MonoBehaviour
 	// YC added
 	void Update ()
 	{
-		//ui.SetMPHValue(_carController.CurrentSpeed);
-		//ui.SetAngleValue(_carController.CurrentSteerAngle);
-
 		if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
 			
 			if (moved == false) {
@@ -84,15 +81,32 @@ public class CommandServer : MonoBehaviour
 
 				thread.Start ();
 			}
+
+			// enter key : manual/auto mode switch
 			if (LogitechGSDK.LogiButtonTriggered (0, 23)) {
 
 				manualMode = !manualMode;
 
 			}
+
+			// ps key : reload scene
 			if (LogitechGSDK.LogiButtonTriggered (0, 24)) {
+				loopCount = 0;
 				Scene scene = SceneManager.GetActiveScene();
 				SceneManager.LoadScene( scene.name );
 			}
+
+			// option key : change scene
+			if (LogitechGSDK.LogiButtonTriggered (0, 9)) {
+				Scene scene = SceneManager.GetActiveScene();
+
+				if(scene.name == "JungleTrackAutonomous")
+					SceneManager.LoadScene( "LakeTrackautonomous" );
+				else
+					SceneManager.LoadScene( "JungleTrackAutonomous" );
+
+			}
+
 		}
 	}
 	// YC added
@@ -136,14 +150,13 @@ public class CommandServer : MonoBehaviour
 		}
 	}
 
-	private void g29_control()
+	void g29_control()
 	{
-		int count = 0;
-		int loopCount = 0;
+		int rotationAngle = 0;
+		int savedAngle = 0;
+		const int thresholdAngle = 7;
+
 		System.Random crandom = new System.Random ();
-
-
-		Debug.Log ("g29_control thread start");
 	
 		if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
 			
@@ -153,17 +166,33 @@ public class CommandServer : MonoBehaviour
 
 			while (true) {
 
-				if (loopCount++ > 20)
+#if true
+				if (loopCount++ > 800)
 					break;
+#endif
 
-				count = Convert.ToInt16 (modelAngle);
-				count = count * 6;
+				rotationAngle = Convert.ToInt16 (modelAngle);
 
-				if (manualMode == false) {
-					moveToDegree ((WHEEL_RANGE / 2) + count);	
+				//Debug.Log ("savedAngle = "+savedAngle);
+				//Debug.Log ("rotationAngle = "+rotationAngle);
+
+				if (Math.Abs (savedAngle - rotationAngle) < thresholdAngle) {
+					
+					//Debug.Log ("continue");
+					Thread.Sleep (25 + crandom.Next (5, 25));  // random sleep,TBC
+					continue;
 				}
 
-				Thread.Sleep (80 + crandom.Next (1, 40));  // random sleep,TBC
+				savedAngle = rotationAngle;
+				//rotationAngle = rotationAngle * 6;
+				rotationAngle = rotationAngle * 2;
+
+				if (manualMode == false) {
+					//moveToDegree ((WHEEL_RANGE / 2) + rotationAngle);	
+					//Debug.Log ("rotationAngle="+rotationAngle);
+				}
+
+				Thread.Sleep (25 + crandom.Next (5, 25));  // random sleep,TBC
 
 			}
 		}
@@ -180,7 +209,6 @@ public class CommandServer : MonoBehaviour
 		_socket.On("manual", onManual);
 		_carController = CarRemoteControl.GetComponent<CarController>();
 
-
 	}
 		
 
@@ -195,7 +223,6 @@ public class CommandServer : MonoBehaviour
 	{
 		EmitTelemetry (obj);
 
-		//Debug.Log("OnManual");
 	}
 
 	void OnSteer(SocketIOEvent obj)
