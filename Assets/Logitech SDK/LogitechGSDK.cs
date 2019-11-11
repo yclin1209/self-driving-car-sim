@@ -582,22 +582,33 @@ public class LogitechGSDK
     public static extern IntPtr LogiGetStateENGINES(int index);
 
     public static DIJOYSTATE2ENGINES LogiGetStateUnity(int index)
-    {
-        DIJOYSTATE2ENGINES ret = new DIJOYSTATE2ENGINES();
-        ret.rglSlider = new int[2];
-        ret.rgdwPOV = new uint[4];
-        ret.rgbButtons = new byte[128];
-        ret.rglVSlider = new int[2];
-        ret.rglASlider = new int[2];
-        ret.rglFSlider = new int[2];
+	{
+		DIJOYSTATE2ENGINES ret = new DIJOYSTATE2ENGINES ();
+		ret.rglSlider = new int[2];
+		ret.rgdwPOV = new uint[4];
+		ret.rgbButtons = new byte[128];
+		ret.rglVSlider = new int[2];
+		ret.rglASlider = new int[2];
+		ret.rglFSlider = new int[2];
+
+		//int size = Marshal.SizeOf(ret);//272 Bytes
+
+		IntPtr buffer;
+
         try
         {
-            ret = (DIJOYSTATE2ENGINES)Marshal.PtrToStructure(LogiGetStateENGINES(index), typeof(DIJOYSTATE2ENGINES));
+			buffer = LogiGetStateENGINES(index); //YC added
+			ret = (DIJOYSTATE2ENGINES)Marshal.PtrToStructure(buffer, typeof(DIJOYSTATE2ENGINES));
+
+			Marshal.FreeCoTaskMem(buffer); 	//YC added
+			buffer = IntPtr.Zero;			//YC added
+
         }
         catch (System.ArgumentException)
         {
             Debug.Log("Exception catched");
         }
+
         return ret;
     }
 
