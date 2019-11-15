@@ -71,10 +71,10 @@ public class CommandServer : MonoBehaviour
 		}
 
 
-		car_pos.x = GameObject.Find ("Car").transform.position.x + 35 ;
-		car_pos.y =  Math.Abs((GameObject.Find ("Car").transform.position.z + 150 - 230 ));
+		car_pos.x = GameObject.Find ("Car").transform.position.x + 43 ;
+		car_pos.y =  Math.Abs((GameObject.Find ("Car").transform.position.z + 150 - 235 ));
 
-		//Debug.Log ("x:" + pos.x +",y:" + pos.y) );
+		Debug.Log ("x:" + GameObject.Find ("Car").transform.position.x +",y:" + GameObject.Find ("Car").transform.position.z );
 
 		if (Time.frameCount % 600 == 0) {
 			//Debug.Log ("GC");

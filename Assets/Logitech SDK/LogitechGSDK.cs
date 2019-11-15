@@ -591,7 +591,7 @@ public class LogitechGSDK
 		ret.rglASlider = new int[2];
 		ret.rglFSlider = new int[2];
 
-		//int size = Marshal.SizeOf(ret);//272 Bytes
+		//int size = Marshal.SizeOf(ret); // 272 Bytes
 
 		IntPtr buffer;
 
@@ -602,7 +602,6 @@ public class LogitechGSDK
 
 			Marshal.FreeCoTaskMem(buffer); 	//YC added
 			buffer = IntPtr.Zero;			//YC added
-
         }
         catch (System.ArgumentException)
         {
