@@ -18,13 +18,15 @@ public class CommandServer : MonoBehaviour
 
 	public UISystem ui;
 	private Thread thread;
-	static bool flag = false;
+	static bool initflag = false;
+	static bool stuckflag = false;
 
 	LogitechGSDK.DIJOYSTATE2ENGINES rec;
+	LogitechGSDK.LogiControllerPropertiesData properties;
 	int currentPos = 0;
 	int moveToPos = 0;
 	bool moved = false;
-	const int WHEEL_RANGE = 300; // must same with G HUB's setting
+	const int WHEEL_RANGE = 360; // must same with G HUB's setting
 	float modelAngle = 0;
 	bool manualMode = false;
 	static int loopCount = 0;
@@ -35,8 +37,24 @@ public class CommandServer : MonoBehaviour
 	void Awake () {
 		
 		ui = GameObject.Find("UISystem").GetComponent<UISystem> ();
-		flag = LogitechGSDK.LogiSteeringInitialize (false);
-		Debug.Log ("SteeringInit:" + flag);
+
+		properties = new LogitechGSDK.LogiControllerPropertiesData ();
+		properties.forceEnable = false;
+		properties.overallGain = 100;
+		properties.springGain = 100;
+		properties.damperGain = 100;
+		properties.defaultSpringEnabled = true;
+		properties.defaultSpringGain = 100;
+		properties.combinePedals = false;
+		properties.wheelRange = WHEEL_RANGE;
+
+		properties.gameSettingsEnabled = false;
+		properties.allowGameSettings = false;
+
+		LogitechGSDK.LogiSetPreferredControllerProperties (properties);
+
+		initflag = LogitechGSDK.LogiSteeringInitialize (false);
+		Debug.Log ("SteeringInit:" + initflag);
 		Thread.Sleep (500);
 
 		//
@@ -71,22 +89,37 @@ public class CommandServer : MonoBehaviour
 		}
 
 
-		car_pos.x = GameObject.Find ("Car").transform.position.x + 43 ;
+		car_pos.x = GameObject.Find ("Car").transform.position.x + 42 ;
 		car_pos.y =  Math.Abs((GameObject.Find ("Car").transform.position.z + 150 - 235 ));
 
-		Debug.Log ("x:" + GameObject.Find ("Car").transform.position.x +",y:" + GameObject.Find ("Car").transform.position.z );
+		//Debug.Log ("x:" + GameObject.Find ("Car").transform.position.x +",y:" + GameObject.Find ("Car").transform.position.z );
 
+		if (Time.frameCount % 100 == 0) {
+			if ( (stuckflag == false) && (Math.Round (_carController.CurrentSpeed) == 0)) {
+				stuckflag = true;
+				Debug.Log ("1st time car stucks, stuckflag set");
+			}
+			else if((stuckflag == true) && (Math.Round (_carController.CurrentSpeed) == 0)){
+				Debug.Log ("2nd time car stucks, reload scene");
+				loopCount = 0;
+				stuckflag = false;
+				Scene scene = SceneManager.GetActiveScene();
+				SceneManager.LoadScene( scene.name );
+				//Debug.Log ("GC");
+				System.GC.Collect ();
+			}
+		}
+		/*
 		if (Time.frameCount % 600 == 0) {
 			//Debug.Log ("GC");
 			System.GC.Collect ();
-		}
+		}*/
 
 	}
 
 	// YC added
 	void Update ()
 	{
-
 
 		if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
 			
@@ -109,6 +142,7 @@ public class CommandServer : MonoBehaviour
 
 			// option key : change scene
 			if (LogitechGSDK.LogiButtonTriggered (0, 9)) {
+				loopCount = 0;
 				Scene scene = SceneManager.GetActiveScene();
 
 				if(scene.name == "JungleTrackAutonomous")
@@ -131,8 +165,7 @@ public class CommandServer : MonoBehaviour
 		deg = (deg / WHEEL_RANGE) * 100;
 
 		moveToPos =  Convert.ToInt16(deg);
-
-
+	
 
 		if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
 
@@ -176,47 +209,47 @@ public class CommandServer : MonoBehaviour
 
 		System.Random crandom = new System.Random ();
 	
-			rec = LogitechGSDK.LogiGetStateUnity (0);
+		rec = LogitechGSDK.LogiGetStateUnity (0);
 			
-			moveToDegree (WHEEL_RANGE / 2);	// init, centering
+		moveToDegree (WHEEL_RANGE / 2);	// init, centering
 
-			Thread.Sleep (1000);// sleep 1 sec
+		Thread.Sleep (1000);// sleep 1 sec
 
-			while (true) {
+		while (true) {
 
 #if false
-				if (loopCount++ > 10000)
-				{
-					if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
+		if (loopCount++ > 10000)
+		{
+			if (LogitechGSDK.LogiUpdate () && LogitechGSDK.LogiIsConnected (0)) {
 						LogitechGSDK.LogiStopConstantForce (0);
-					}
-					break;
-				}
+			}
+			break;
+		}
 #endif
 
-				rotationAngle = Convert.ToInt16 (modelAngle);
+		rotationAngle = Convert.ToInt16 (modelAngle);
 
-				//Debug.Log ("savedAngle = "+savedAngle);
-				//Debug.Log ("rotationAngle = "+rotationAngle);
+		//Debug.Log ("savedAngle = "+savedAngle);
+		//Debug.Log ("rotationAngle = "+rotationAngle);
 
-				if (Math.Abs (savedAngle - rotationAngle) < thresholdAngle) {
+		if (Math.Abs (savedAngle - rotationAngle) < thresholdAngle) {
 					
 					//Debug.Log ("continue");
 					Thread.Sleep (25 + crandom.Next (5, 25));  // random sleep,TBC
 					continue;
-				}
+		}
 
-				savedAngle = rotationAngle;
-				//rotationAngle = rotationAngle * 6;
-				rotationAngle = rotationAngle * 2;
+		savedAngle = rotationAngle;
+		//rotationAngle = rotationAngle * 6;
+		rotationAngle = rotationAngle * 2;
 
-				if (manualMode == false) {
+		if (manualMode == false) {
 					moveToDegree ((WHEEL_RANGE / 2) + rotationAngle);	
-				}
+		}
 
-				Thread.Sleep (25 + crandom.Next (5, 25));  // random sleep,TBC
+		Thread.Sleep (25 + crandom.Next (5, 25));  // random sleep,TBC
 
-			}
+		}
 
 
 	}
@@ -257,7 +290,6 @@ public class CommandServer : MonoBehaviour
 
 		// set the modelAngle
 		modelAngle = CarRemoteControl.SteeringAngle *25;
-
 
 		//Debug.Log("car_location=" + float.Parse(jsonObject.GetField("car_location").str));
 
@@ -309,7 +341,6 @@ public class CommandServer : MonoBehaviour
 		thread.Abort ();
 		LogitechGSDK.LogiStopConstantForce (0);
 		Debug.Log("SteeringShutdown:" + LogitechGSDK.LogiSteeringShutdown());
-
 	}
 
 

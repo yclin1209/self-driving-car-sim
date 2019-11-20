@@ -67,7 +67,7 @@ PlayerSettings:
   use32BitDisplayBuffer: 1
   disableDepthAndStencilBuffers: 0
   defaultIsFullScreen: 1
-  defaultIsNativeResolution: 0
+  defaultIsNativeResolution: 1
   runInBackground: 0
   captureSingleScreen: 0
   muteOtherAudioSources: 0
